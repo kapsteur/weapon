@@ -105,7 +105,7 @@ func main() {
 		log.Println(d.Watermark().Format(time.UnixDate))
 	})*/
 
-	log.Println("Serving messenger bot on localhost:" + conf.Port)
+	log.Println("Serving messenger bot on :" + conf.Port)
 
-	log.Fatal(http.ListenAndServe("localhost:"+conf.Port, client.Handler()))
+	log.Fatal(http.ListenAndServe(":"+conf.Port, client.Handler()))
 }
