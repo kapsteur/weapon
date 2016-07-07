@@ -15,6 +15,7 @@ type Config struct {
 	VerifyToken string `envconfig:"VERIFY_TOKEN"`
 	Verify      bool   `envconfig:"VERIFY,optional"`
 	PageToken   string `envconfig:"PAGE_TOKEN"`
+	Port        string `envconfig:"PORT"`
 }
 
 var (
@@ -104,7 +105,7 @@ func main() {
 		log.Println(d.Watermark().Format(time.UnixDate))
 	})*/
 
-	log.Println("Serving messenger bot on localhost:7823")
+	log.Println("Serving messenger bot on localhost:" + conf.Port)
 
-	log.Fatal(http.ListenAndServe("localhost:7823", client.Handler()))
+	log.Fatal(http.ListenAndServe("localhost:"+conf.Port, client.Handler()))
 }
