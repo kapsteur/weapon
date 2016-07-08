@@ -15,20 +15,20 @@ type Config struct {
 	VerifyToken string `envconfig:"VERIFY_TOKEN"`
 	Verify      bool   `envconfig:"VERIFY,optional"`
 	PageToken   string `envconfig:"PAGE_TOKEN"`
-	Port        string `envconfig:"PORT"`
 }
 
 var (
 	conf    *Config
 	weapons = []string{"✌", "✊", "✋"}
-	replies = []messenger.QuickReplie{
-		messenger.QuickReplie{ContentType: "text", Title: "✌", Payload: "1"},
-		messenger.QuickReplie{ContentType: "text", Title: "✊", Payload: "2"},
-		messenger.QuickReplie{ContentType: "text", Title: "✋", Payload: "3"}}
+	replies = []messenger.QuickReply{
+		messenger.QuickReply{ContentType: "text", Title: "✌", Payload: "1"},
+		messenger.QuickReply{ContentType: "text", Title: "✊", Payload: "2"},
+		messenger.QuickReply{ContentType: "text", Title: "✋", Payload: "3"}}
 	rules = [][]int{[]int{0, -1, 1}, []int{1, 0, -1}, []int{-1, 1, 0}}
 )
 
-func main() {
+func init() {
+
 	if err := envconfig.Init(&conf); err != nil {
 		log.Fatal("err=%s\n", err)
 	}
@@ -88,24 +88,19 @@ func main() {
 				log.Printf("Text2 - Err:%s", err)
 			}
 
-			err = r.TextWithReplies("Choose your weapon", &replies)
+			err = r.TextWithReplies("Choose your weapon", replies)
 			if err != nil {
 				log.Printf("TextWithReplies1 - Err:%s", err)
 			}
+
 		} else {
-			err = r.TextWithReplies(fmt.Sprintf("Are you serious %s ?", p.FirstName), &replies)
+
+			err = r.TextWithReplies(fmt.Sprintf("Are you serious %s ?", p.FirstName), replies)
 			if err != nil {
 				log.Println("TextWithReplies2 - Err:%s", err)
 			}
 		}
 	})
 
-	/*// Setup a handler to be triggered when a message is read
-	client.HandleDelivery(func(d messenger.Delivery, r *messenger.Response) {
-		log.Println(d.Watermark().Format(time.UnixDate))
-	})*/
-
-	log.Println("Serving messenger bot on :" + conf.Port)
-
-	log.Fatal(http.ListenAndServe(":"+conf.Port, client.Handler()))
+	http.Handle("/", client.Handler())
 }

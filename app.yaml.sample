@@ -1,0 +1,10 @@
+runtime: go
+api_version: go1
+
+handlers:
+- url: /.*
+  script: _go_app
+
+env_variables:
+  VERIFY_TOKEN: 'YOUR_VERIFY_TOKEN'
+  PAGE_TOKEN: 'YOUR_PAGE_TOKEN'
