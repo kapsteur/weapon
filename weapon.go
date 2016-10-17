@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -27,7 +28,7 @@ type Game struct {
 	BotWin            int
 	LastUserWeaponIdx int
 	LastBotWeaponIdx  int
-	HasWin            bool
+	IsWon             bool
 }
 
 var (
@@ -129,9 +130,9 @@ func init() {
 				log.Infof(ctx, "Text2 - Err:%s", err)
 			}
 
-			if !game.HasWin && game.UserWin == 5 && game.BotWin < 5 {
+			if !game.IsWon && game.UserWin == 5 && game.BotWin < 5 {
 
-				game.HasWin = true
+				game.IsWon = true
 
 				err = r.Text(ctx, "You won, congrats 🏆.")
 				if err != nil {
@@ -143,9 +144,9 @@ func init() {
 					log.Infof(ctx, "Text4 - Err:%s", err)
 				}
 
-			} else if !game.HasWin && game.UserWin < 5 && game.BotWin == 5 {
+			} else if !game.IsWon && game.UserWin < 5 && game.BotWin == 5 {
 
-				game.HasWin = true
+				game.IsWon = true
 
 				err = r.Text(ctx, "I'm the winner, sorry.")
 				if err != nil {
@@ -157,6 +158,12 @@ func init() {
 					log.Infof(ctx, "Text6 - Err:%s", err)
 				}
 
+			} else if math.Mod(float64(game.UserWin), 5.0) == 0.0 || math.Mod(float64(game.BotWin), 5.0) == 0.0 {
+
+				err = r.Text(ctx, "You can continue to play for the fun or enter `reset` to restart the game.")
+				if err != nil {
+					log.Infof(ctx, "Text6 - Err:%s", err)
+				}
 			}
 
 			err = r.TextWithReplies(ctx, "Choose your weapon", replies)
